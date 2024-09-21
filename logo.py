@@ -15,7 +15,7 @@ client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 def image_gen(img):
     response = client.images.generate(
         model = "dall-e-2",
-        prompt = "combine the items in art style simple geometrical shapes on a white background: " + img +
+        prompt = "create a portrait in art style simple geometrical shapes on a white background: " + img +
             ". Do not include any text, words, letters, or alphabets in the image. "
             "Focus solely on the portrait and the specified elements, with no additional variations.",
         size = "256x256",

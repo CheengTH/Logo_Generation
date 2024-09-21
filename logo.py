@@ -196,15 +196,12 @@ if uploaded_file is not None:
 
             
 if 'generated_image' in st.session_state:
-    col1, col2 = st.columns(1)
-    
-    with col1:
-        st.download_button(
-            label="Download Generated Logo",
-            data=st.session_state.generated_image,
-            file_name="generated_logo.png",
-            mime="image/png"
-        )
+    st.download_button(
+        label="Download Generated Logo",
+        data=st.session_state.generated_image,
+        file_name="generated_logo.png",
+        mime="image/png"
+    )
 
 if st.button("Clear Session"):
     clear_session_state()

@@ -1,0 +1,8 @@
+ipython
+openai
+Pillow
+Requests
+streamlit
+base64
+json
+io

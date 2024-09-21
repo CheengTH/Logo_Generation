@@ -12,12 +12,11 @@ from IPython.display import display, Image
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 # Functions part
-def image_gen(img):
+def image_gen(img, prompt):
     response = client.images.generate(
         model = "dall-e-2",
-        prompt = "create a portrait in art style simple geometrical shapes on a white background: " + img +
-            ". Do not include any text, words, letters, or alphabets in the image. "
-            "Focus solely on the portrait and the specified elements, with no additional variations.",
+        prompt = prompt + img +
+            ". Do not include any text, words, letters, or alphabets in the image. ",
         size = "256x256",
         n = 1,
     )
@@ -179,23 +178,47 @@ if uploaded_file is not None:
                 if option.strip() in st.session_state.selected_items:
                     st.session_state.selected_items.remove(option.strip())
 
-        if st.form_submit_button(label='Submit'):
-            url = image_gen(str(st.session_state.selected_items))
-            st.image(url, caption='Generated Logo', use_column_width=True)
-            explanation = explainer(url, str(st.session_state.selected_items))
-            st.write(explanation)
-            
-            image_response = requests.get(url)
-            img = PIL.Image.open(io.BytesIO(image_response.content))
-            
-            img_byte_arr = io.BytesIO()
-            img.save(img_byte_arr, format='PNG')
-            img_byte_arr.seek(0) 
-            
-            st.session_state.generated_image = img_byte_arr
+        col1, col2 = st.columns(2)
+
+        with col1:
+            if st.form_submit_button(label='Submit for vector logo'):
+                prompt = "One simplify vector portrait in art style simple geometrical shapes on a white background: "
+                url = image_gen(str(st.session_state.selected_items), prompt)
+                st.session_state.url = url
+                explanation = explainer(url, str(st.session_state.selected_items))
+                st.session_state.explanation = explanation
+                image_response = requests.get(url)
+                img = PIL.Image.open(io.BytesIO(image_response.content))
+                
+                img_byte_arr = io.BytesIO()
+                img.save(img_byte_arr, format='PNG')
+                img_byte_arr.seek(0)
+                
+                st.session_state.generated_image = img_byte_arr
+
+        with col2:
+            if st.form_submit_button(label='Submit for doodle logo'):
+                prompt = "One simplify doodle picture in art style simple geometrical shapes on a white background:"
+                url = image_gen(str(st.session_state.selected_items), prompt)
+                st.session_state.url = url
+                explanation = explainer(url, str(st.session_state.selected_items))
+                st.session_state.explanation = explanation
+                image_response = requests.get(url)
+                img = PIL.Image.open(io.BytesIO(image_response.content))
+                
+                img_byte_arr = io.BytesIO()
+                img.save(img_byte_arr, format='PNG')
+                img_byte_arr.seek(0)
+                
+                st.session_state.generated_image = img_byte_arr
 
             
 if 'generated_image' in st.session_state:
+    url = st.session_state.url
+    explanation = st.session_state.explanation
+    st.image(url, caption='Generated Logo', use_column_width=True)
+    st.write(explanation)
+    
     st.download_button(
         label="Download Generated Logo",
         data=st.session_state.generated_image,
@@ -203,5 +226,5 @@ if 'generated_image' in st.session_state:
         mime="image/png"
     )
 
-if st.button("Clear Session"):
+if st.button("Relook for features?"):
     clear_session_state()
